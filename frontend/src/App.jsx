@@ -41,7 +41,7 @@ function App() {
     transition={{ duration: 0.7 }}
     className="mb-12 sm:mb-12 text-base sm:text-lg md:text-xl text-center text-gray-800"
   >
-    Share your problem with Nora
+    Ask your problem with Nora
   </motion.h2>
 
   {/* Mic Button */}
