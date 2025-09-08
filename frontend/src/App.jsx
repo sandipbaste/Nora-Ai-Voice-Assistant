@@ -30,7 +30,7 @@ function App() {
     initial={{ opacity: 0, y: -20 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.7 }}
-    className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-2 sm:mb-3"
+    className="text-2xl pt-16 sm:text-3xl md:text-4xl font-bold text-center mb-2 sm:mb-3"
   >
     🎙️ Nora - Your AI Assistant
   </motion.h1>
@@ -39,7 +39,7 @@ function App() {
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.7 }}
-    className="mb-12 sm:mb-12 text-base sm:text-lg md:text-xl text-center text-gray-800"
+    className="mb-12 sm:mb-20 text-base sm:text-lg md:text-xl text-center text-gray-800"
   >
     Ask your problem with Nora
   </motion.h2>
@@ -50,7 +50,7 @@ function App() {
   </div>
 
   {/* Responses */}
-  <div className="space-y-4 w-full max-w-md sm:max-w-2xl px-2">
+  <div className="max-sm:6 space-y-4 w-full max-w-md sm:max-w-2xl px-2">
     {responses.map((res, i) => (
       <ResponseCard key={i} question={res.question} answer={res.answer} />
     ))}

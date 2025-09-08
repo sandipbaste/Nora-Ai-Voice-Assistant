@@ -74,51 +74,45 @@ def start_timer(minutes: int, reminder: str = "Time’s up! Take a break."):
     threading.Thread(target=timer_thread, daemon=True).start()
     return f"Timer set for {minutes} minutes."
 
-# === PROCESS COMMANDS ===
+# === PROCESS COMMANDS (no speak here) ===
 def processCommand(c: str):
     c = c.lower()
 
     if "open google" in c:
-        speak("Opening Google")
         webbrowser.open("https://google.com")
-        return "Opened Google"
+        return "Opening Google"
 
     elif "open facebook" in c:
-        speak("Opening Facebook")
         webbrowser.open("https://facebook.com")
-        return "Opened Facebook"
+        return "Opening Facebook"
 
     elif "open youtube" in c:
-        speak("Opening YouTube")
         webbrowser.open("https://youtube.com")
-        return "Opened YouTube"
+        return "Opening YouTube"
 
     elif "open linkedin" in c:
-        speak("Opening LinkedIn")
         webbrowser.open("https://linkedin.com")
-        return "Opened LinkedIn"
+        return "Opening LinkedIn"
 
     elif c.startswith("play"):
-        song = c.split(" ")[1]
-        link = musicLibrary.music.get(song, None)
-        if link:
-            speak(f"Playing {song}")
-            webbrowser.open(link)
-            return f"Playing {song}"
-        else:
-            speak("Song not found.")
-            return "Song not found."
+        parts = c.split(" ", 1)
+        if len(parts) > 1:
+            song = parts[1]
+            link = musicLibrary.music.get(song, None)
+            if link:
+                webbrowser.open(link)
+                return f"Playing {song}"
+            else:
+                return "Song not found."
+        return "Please specify a song name."
 
     elif "news" in c:
         r = requests.get(f"https://newsapi.org/v2/top-headlines?country=us&apiKey={newsapi}")
         if r.status_code == 200:
             articles = r.json().get("articles", [])
             headlines = [article["title"] for article in articles[:5]]
-            for title in headlines:
-                speak(title)
-            return " | ".join(headlines)
+            return " | ".join(headlines) if headlines else "No news found."
         else:
-            speak("Sorry, couldn't fetch news right now.")
             return "News fetch failed."
 
     elif "timer" in c or "remind me" in c:
@@ -127,16 +121,13 @@ def processCommand(c: str):
         if match:
             minutes = int(match.group(1))
             reminder = "Time’s up! Take a short break." if "break" in c else "Time’s up!"
-            speak(start_timer(minutes, reminder))
+            start_timer(minutes, reminder)
             return f"Timer started for {minutes} minutes."
         else:
-            speak("Please specify the timer duration in minutes.")
             return "No duration found."
 
     else:
-        output = aiProcess(c)
-        speak(output)
-        return output
+        return aiProcess(c)
 
 # === FASTAPI ENDPOINT (Frontend) ===
 @app.post("/ask/")
@@ -159,7 +150,6 @@ async def get_audio(filename: str):
     if os.path.exists(file_path):
         return FileResponse(file_path, media_type="audio/mpeg")
     return {"error": "File not found"}
-
 
 # === LOCAL MODE ===
 if __name__ == "__main__":
@@ -188,7 +178,8 @@ if __name__ == "__main__":
                     if "stop nora" in command.lower():
                         speak("Goodbye, shutting down.")
                         break
-                    processCommand(command)
+                    answer = processCommand(command)
+                    speak(answer)  # speak only here in local mode
                 except Exception:
                     pass
     except KeyboardInterrupt:
